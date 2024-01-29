@@ -3,7 +3,7 @@
 Program::Program(std::initializer_list<Shader*> shaders){
     shaderProgram = glCreateProgram();
 
-    for(auto shader : shaders){
+    for(auto& shader : shaders){
         glAttachShader(shaderProgram, shader->getShader());
     }
 

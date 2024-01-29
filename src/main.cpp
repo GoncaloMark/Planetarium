@@ -1,8 +1,8 @@
 #include "../include/config.hpp"
 #include "../include/shader.hpp"
 #include "../include/program.hpp"
-
-void processInput(GLFWwindow *window);
+#include "../include/io.hpp"
+#include "../include/buffer.hpp"
 
 const char *vertexShaderSource = "#version 330 core\n"
         "layout (location = 0) in vec3 aPos;\n"
@@ -27,15 +27,16 @@ int main(){
     }
 
     {
-        Shader vertexShader = Shader(vertexShaderSource, GL_VERTEX_SHADER);
-        Shader fragmentShader = Shader(fragmentShaderSource, GL_FRAGMENT_SHADER);
+        Shader vertexShader(vertexShaderSource, GL_VERTEX_SHADER);
+        Shader fragmentShader(fragmentShaderSource, GL_FRAGMENT_SHADER);
 
-        Program shaderProgram = Program({&vertexShader, &fragmentShader});
+        Program shaderProgram({&vertexShader, &fragmentShader});
 
-        unsigned int VBO, VAO, EBO;
+        unsigned int VAO;
         glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-        glGenBuffers(1, &EBO);
+
+        Buffer VBO(GL_ARRAY_BUFFER);
+        Buffer EBO(GL_ELEMENT_ARRAY_BUFFER);
 
         glBindVertexArray(VAO);
 
@@ -51,16 +52,16 @@ int main(){
             1, 2, 3
         };  
 
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        VBO.bindBuffer();
+        VBO.addData(vertices, sizeof(vertices), GL_STATIC_DRAW);
 
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+        VBO.unbindBuffer();
 
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        EBO.bindBuffer();
+        EBO.addData(indices, sizeof(indices), GL_STATIC_DRAW);
 
         while(!glfwWindowShouldClose(window)){
             processInput(window);
@@ -77,18 +78,10 @@ int main(){
         }
 
         glDeleteVertexArrays(1, &VAO);
-        glDeleteBuffers(1, &VBO);
-        glDeleteBuffers(1, &EBO);
     }
 
     glfwTerminate();
 
     return 0;
-}
-
-void processInput(GLFWwindow *window)
-{
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
 }
 
