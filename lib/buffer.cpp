@@ -5,5 +5,6 @@ Buffer::Buffer(unsigned int type) : type(type){
 }
 
 Buffer::~Buffer(){
+    std::cout << "Cleaning up Buffer..." << type << std::endl;
     glDeleteBuffers(1, &buffer);
 }
