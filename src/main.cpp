@@ -15,7 +15,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
         "out vec4 FragColor;\n"
         "void main()\n"
         "{\n"
-        "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+        "   FragColor = vec4(1.0f, 1.0f, 0.2f, 1.0f);\n"
         "}\n\0";
 
 int main(){
@@ -28,16 +28,20 @@ int main(){
     }
 
     {
-        float vertices[] = {
-            0.5f,  0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            -0.5f, -0.5f, 0.0f,
-            -0.5f,  0.5f, 0.0f
+        float t1_vertices[] = {
+            0.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -0.5f, 1.0f, 0.0f,
+        };
+
+        float t2_vertices[] = {
+            0.0f, 0.0f, 0.0f, 
+            1.0f,  0.0f, 0.0f, 
+            0.5f, 1.0f, 0.0f
         };
 
         unsigned int indices[] = { 
-            0, 1, 3,
-            1, 2, 3
+            0, 1, 2
         };
 
         Shader vertexShader(vertexShaderSource, GL_VERTEX_SHADER);
@@ -45,23 +49,34 @@ int main(){
 
         Program shaderProgram({&vertexShader, &fragmentShader});
 
-        VArray VAO;
+        VArray t1_VAO;
+        VArray t2_VAO;
 
-        Buffer VBO(GL_ARRAY_BUFFER);
+        Buffer t1_VBO(GL_ARRAY_BUFFER);
+        Buffer t2_VBO(GL_ARRAY_BUFFER);
         Buffer EBO(GL_ELEMENT_ARRAY_BUFFER);
 
-        VAO.bindVA();
+        t1_VAO.bindVA();
 
-        VBO.bindBuffer();
-        VBO.addData(vertices, sizeof(vertices), GL_STATIC_DRAW);
+        t1_VBO.bindBuffer();
+        t1_VBO.addData(t1_vertices, sizeof(t1_vertices), GL_STATIC_DRAW);
 
-        VAO.getAttributePointers<float>(0, 3, GL_FLOAT, GL_FALSE, 3);
-        VBO.unbindBuffer();
+        t1_VAO.getAttributePointers<float>(0, 3, GL_FLOAT, GL_FALSE, 3);
+        t1_VBO.unbindBuffer();
+
+        t2_VAO.bindVA();
+
+        t2_VBO.bindBuffer();
+        t2_VBO.addData(t2_vertices, sizeof(t2_vertices), GL_STATIC_DRAW);
+
+        t2_VAO.getAttributePointers<float>(0, 3, GL_FLOAT, GL_FALSE, 3);
+        t2_VBO.unbindBuffer();
 
         EBO.bindBuffer();
         EBO.addData(indices, sizeof(indices), GL_STATIC_DRAW);
 
-        VAO.unbindVA();
+        t1_VAO.unbindVA();
+        t2_VAO.unbindVA();
 
         while(!glfwWindowShouldClose(window)){
             processInput(window);
@@ -70,8 +85,11 @@ int main(){
             glClear(GL_COLOR_BUFFER_BIT);
 
             glUseProgram(shaderProgram.getProgram());
-            glBindVertexArray(VAO.getVArray());
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            glBindVertexArray(t1_VAO.getVArray());
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+
+            glBindVertexArray(t2_VAO.getVArray());
+            glDrawArrays(GL_TRIANGLES, 0, 3);
 
             glfwSwapBuffers(window);
             glfwPollEvents();    
