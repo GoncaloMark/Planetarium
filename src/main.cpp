@@ -4,6 +4,7 @@
 #include "../include/io.hpp"
 #include "../include/buffer.hpp"
 #include "../include/varray.hpp"
+#include "../include/texture.hpp"
 
 #include <cmath>
 
@@ -20,8 +21,8 @@ int main(){
         float t1_vertices[] = {
             // Position         // Color            // Texture
             0.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   0.0f, 0.0f,
-            -1.0f, 0.0f, 0.0f,  0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
-            -0.5f, 1.0f, 0.0f,  0.0f, 0.0f, 1.0f,   0.5f, 1.0f
+            -1.0f, 0.0f, 0.0f,  0.0f, 1.0f, 0.0f,   -1.0f, 0.0f,
+            -0.5f, 1.0f, 0.0f,  0.0f, 0.0f, 1.0f,   -0.5f, 1.0f
         };
 
         unsigned int indices[] = { 
@@ -43,14 +44,17 @@ int main(){
         t1_VBO.bindBuffer();
         t1_VBO.addData(t1_vertices, sizeof(t1_vertices), GL_STATIC_DRAW);
 
-        t1_VAO.getAttributePointers<float>(0, 3, GL_FLOAT, GL_FALSE, 6, 0);
-        t1_VAO.getAttributePointers<float>(1, 3, GL_FLOAT, GL_FALSE, 6, 3);
+        t1_VAO.getAttributePointers<float>(0, 3, GL_FLOAT, GL_FALSE, 8, 0);
+        t1_VAO.getAttributePointers<float>(1, 3, GL_FLOAT, GL_FALSE, 8, 3);
+        t1_VAO.getAttributePointers<float>(2, 2, GL_FLOAT, GL_FALSE, 8, 6);
         t1_VBO.unbindBuffer();
 
         EBO.bindBuffer();
         EBO.addData(indices, sizeof(indices), GL_STATIC_DRAW);
 
         t1_VAO.unbindVA();
+
+        Texture tex1("textures/texture.jpg");
 
         while(!glfwWindowShouldClose(window)){
             processInput(window);
@@ -60,11 +64,10 @@ int main(){
 
             glUseProgram(shaderProgram.getProgram());
 
-            float timeValue = glfwGetTime();
-            float xValue = (sin(timeValue) / 2.0f) + 0.5f;
-            shaderProgram.setUniformFloat("offset", xValue);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, tex1.getTexture());
             glBindVertexArray(t1_VAO.getVArray());
-            glDrawArrays(GL_TRIANGLES, 0, 3);
+            glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
             glfwSwapBuffers(window);
             glfwPollEvents();    

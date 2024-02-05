@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include_directories(include)
 
-set(SOURCES src/main.cpp lib/glad.c lib/config.cpp lib/program.cpp lib/shader.cpp lib/io.cpp lib/buffer.cpp lib/varray.cpp)
+set(SOURCES src/main.cpp lib/glad.c lib/config.cpp lib/program.cpp lib/shader.cpp lib/io.cpp lib/buffer.cpp lib/varray.cpp lib/texture.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
