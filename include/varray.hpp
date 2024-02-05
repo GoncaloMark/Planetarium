@@ -13,9 +13,9 @@ class VArray {
         void unbindVA(){
             glBindVertexArray(0);
         };
-        template <typename T> void getAttributePointers(unsigned int index, unsigned int size, unsigned int type, unsigned int normalized, size_t stride){
-            glVertexAttribPointer(index, size, type, normalized, stride * sizeof(T), (void*)0);
-            glEnableVertexAttribArray(0);
+        template <typename T> void getAttributePointers(unsigned int index, unsigned int size, unsigned int type, unsigned int normalized, size_t stride, size_t offset){
+            glVertexAttribPointer(index, size, type, normalized, stride * sizeof(T), (void*)(offset * sizeof(T)));
+            glEnableVertexAttribArray(index);
         };
         unsigned int getVArray() const { return varray; }
 

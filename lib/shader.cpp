@@ -5,7 +5,7 @@ Shader::Shader(const char* sourceFile) {
     std::ifstream shaderSource;
     std::string ext;
 
-    shaderSource.exceptions(std::ifstream::failbit | std::ifstream::badbit); //TODO
+    shaderSource.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
     ext = std::filesystem::path(sourceFile).extension().string();
     setType(ext);
