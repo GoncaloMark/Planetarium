@@ -1,5 +1,5 @@
 #pragma once
-#include <glad/glad.h>
+#include "../lib/glad/include/glad/glad.h"
 #include <iostream>
 #include <GLFW/glfw3.h>
 
